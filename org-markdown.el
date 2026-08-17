@@ -75,7 +75,7 @@ files commonly use fenced code blocks, task lists, and tables."
   "Convert STRING from Pandoc format FROM to Pandoc format TO.
 
 This function shells out to `org-markdown-pandoc-executable'.  FROM and TO are
-Pandoc format strings such as "gfm" and "org"."
+Pandoc format strings such as `gfm' and `org'."
   (unless (executable-find org-markdown-pandoc-executable)
     (user-error "Pandoc not found; customize `org-markdown-pandoc-executable' or install pandoc"))
   (let ((out (generate-new-buffer " *org-markdown pandoc out*"))
