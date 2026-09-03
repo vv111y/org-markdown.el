@@ -41,6 +41,17 @@ files commonly use fenced code blocks, task lists, and tables."
   :type 'string
   :group 'org-markdown)
 
+(defcustom org-markdown-generate-heading-identifiers nil
+  "Whether Markdown imports should generate identifiers for headings.
+
+When nil, disable Pandoc's automatic heading-identifier extension for the
+configured Markdown input format.  This prevents generated identifiers from
+appearing as Org property drawers containing `CUSTOM_ID'.  Explicit heading
+identifiers in the source Markdown are still preserved when the input format
+supports them."
+  :type 'boolean
+  :group 'org-markdown)
+
 (defcustom org-markdown-markdown-output-format "gfm"
   "Pandoc output format used for Markdown exports."
   :type 'string
@@ -156,6 +167,21 @@ it unchanged."
   "Return MARKDOWN wrapped in an Org source block."
   (concat "#+begin_src markdown\n" markdown "\n#+end_src\n\n"))
 
+(defun org-markdown--markdown-input-format ()
+  "Return the configured Markdown input format with identifier policy applied."
+  (if org-markdown-generate-heading-identifiers
+      org-markdown-markdown-input-format
+    (let* ((base (car (split-string org-markdown-markdown-input-format "[+-]")))
+           (extension
+            (cond
+             ((member base '("gfm" "commonmark_x")) "gfm_auto_identifiers")
+             ((string= base "markdown_mmd") "mmd_header_identifiers")
+             ((string= base "commonmark") nil)
+             (t "auto_identifiers"))))
+      (if extension
+          (concat org-markdown-markdown-input-format "-" extension)
+        org-markdown-markdown-input-format))))
+
 (defun org-markdown--convert-markdown-to-org (markdown &optional relative)
   "Convert MARKDOWN to Org.
 
@@ -163,7 +189,7 @@ When RELATIVE is non-nil, shift converted headings so the converted root heading
 is a child of the current Org heading."
   (let ((org (org-markdown-convert-string
               markdown
-              org-markdown-markdown-input-format
+              (org-markdown--markdown-input-format)
               org-markdown-org-format)))
     (if relative
         (org-markdown-shift-headings-in-string

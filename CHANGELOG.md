@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add `org-markdown-generate-heading-identifiers` to suppress generated
+  `CUSTOM_ID` property drawers on Markdown imports; disabled by default.
+
 ## 0.1.0 - 2026-08-17
 
 Initial package skeleton.

@@ -26,6 +26,23 @@
     (goto-char (point-max))
     (should (= (org-markdown-current-child-heading-level) 3))))
 
+(ert-deftest org-markdown-markdown-input-format-test ()
+  (let ((org-markdown-markdown-input-format "gfm"))
+    (let ((org-markdown-generate-heading-identifiers nil))
+      (should (equal (org-markdown--markdown-input-format)
+                     "gfm-gfm_auto_identifiers")))
+    (let ((org-markdown-generate-heading-identifiers t))
+      (should (equal (org-markdown--markdown-input-format) "gfm")))))
+
+(ert-deftest org-markdown-pandoc-generated-heading-identifiers-test ()
+  (skip-unless (executable-find org-markdown-pandoc-executable))
+  (let ((org-markdown-markdown-input-format "gfm")
+        (org-markdown-generate-heading-identifiers nil))
+    (should-not
+     (string-match-p
+      ":CUSTOM_ID:"
+      (org-markdown--convert-markdown-to-org "# Generated heading\n")))))
+
 (ert-deftest org-markdown-pandoc-convert-smoke-test ()
   (skip-unless (executable-find org-markdown-pandoc-executable))
   (should (string-match-p "^\\* Heading"
