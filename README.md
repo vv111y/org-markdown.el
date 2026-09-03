@@ -12,6 +12,7 @@ The intended model:
 ## Features
 
 - Convert Markdown clipboard text to Org and paste at point.
+- Suppress Pandoc-generated heading `CUSTOM_ID` property drawers by default.
 - Shift pasted Org headings relative to the current Org parent heading.
 - Optionally preserve the original Markdown before the converted Org.
 - Replace a Markdown region or buffer with Org.
@@ -145,6 +146,18 @@ Spacemacs:
 (setq org-markdown-markdown-output-format "gfm")
 (setq org-markdown-pandoc-extra-arguments '("--wrap=none"))
 ```
+
+Pandoc normally generates an identifier for every Markdown heading, which its
+Org writer emits as a `CUSTOM_ID` property drawer.  These generated drawers are
+disabled by default.  Enable them when stable generated heading anchors are
+needed:
+
+```elisp
+(setq org-markdown-generate-heading-identifiers t)
+```
+
+Explicit heading identifiers in source Markdown remain preserved when the
+selected Pandoc input format supports them.
 
 ## Development
 
